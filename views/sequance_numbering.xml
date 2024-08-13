@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+<!--    update stock.picking model to add operation_sequence to that numbering the operations
+   and add fields total_product_quantity_done and total_product_quantity_done-->
+    <record id='view_stock_picking_form_inherit' model='ir.ui.view'>
+        <field name="name">stock.picking.form.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="sale_customer_id" attrs="{'invisible': [('sale_customer_id', '=', False)]}"/>
+            </xpath>
+<!--            numbering the operations -->
+               <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_id']" position="before">
+                    <field name="operation_sequence" readonly="1" force_save="1"/>
+                </xpath>
+
+           <xpath expr="//sheet" position="inside">
+    <div>
+        <label for="total_product_uom_qty" style="font-size: large; font-weight: bold;">Total Demand:</label>
+        <field name="total_product_uom_qty" readonly="1" style="font-size: large; font-weight: bold;"/>
+    </div>
+</xpath>
+             <xpath expr="//sheet" position="inside">
+    <div>
+        <label for="total_product_quantity_done" style="font-size: large; font-weight: bold;">Total Demand:</label>
+        <field name="total_product_quantity_done" readonly="1" style="font-size: large; font-weight: bold;"/>
+    </div>
+</xpath>
+        </field>
+<!--        add action to recompute sequance numbering of the picking operations-->
+    </record>
+    <record id="action_recompute_picking_sequence" model="ir.actions.server">
+    <field name="name">Recompute Picking Sequence</field>
+    <field name="type">ir.actions.server</field>
+    <field name="model_id" ref="model_stock_picking"/>
+    <field name="binding_model_id" ref="model_stock_picking"/>
+    <field name="state">code</field>
+    <field name="code">records.recompute_picking_sequence()</field>
+</record>
+    <record id="action_recompute_customer_picking" model="ir.actions.server">
+    <field name="name">set customers</field>
+    <field name="type">ir.actions.server</field>
+    <field name="model_id" ref="model_stock_picking"/>
+    <field name="binding_model_id" ref="model_stock_picking"/>
+    <field name="state">code</field>
+    <field name="code">records.action_customer()</field>
+</record>
+    <record id="action_recompute_schedualed_date" model="ir.actions.server">
+    <field name="name">set scheduled date</field>
+    <field name="type">ir.actions.server</field>
+    <field name="model_id" ref="model_stock_picking"/>
+    <field name="binding_model_id" ref="model_stock_picking"/>
+    <field name="state">code</field>
+    <field name="code">records._compute_set_schedual_date()</field>
+</record>
+    <record id="view_stock_picking_form_custom" model="ir.ui.view">
+        <field name="name">stock.picking.form.custom</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='location_id']" position="after">
+                <field name="customer_reference"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="your_custom_view_id" model="ir.ui.view">
+    <field name="name">Custom Stock Picking Form</field>
+    <field name="model">stock.picking</field>
+    <field name="inherit_id" ref="stock.vpicktree"/>
+    <field name="arch" type="xml">
+        <xpath expr="//field[@name='scheduled_date']" position="attributes">
+            <attribute name="attrs"/>
+        </xpath>
+    </field>
+</record>
+
+</odoo>

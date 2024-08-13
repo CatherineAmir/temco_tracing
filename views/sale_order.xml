@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_sales_order_line_filter_inherited" model="ir.ui.view">
+            <field name="name">sales.order.line.filter.inherited</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='salesperson']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//filter[@name='salesperson']" position="after">
+                    <filter string="SalesTeam" name="salesteam" domain="[]" context="{'group_by':'team_id'}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
